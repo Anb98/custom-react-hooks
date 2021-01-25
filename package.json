@@ -26,8 +26,7 @@
   },
   "homepage": "https://github.com/Anb98/custom-react-hooks#readme",
   "dependencies": {
-    "axios": "^0.21.1",
-    "prop-types": "^15.7.2"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
