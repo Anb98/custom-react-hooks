@@ -12,7 +12,7 @@ setGlobals({
 })
 ```
 
-### useDataApi initial options
+### setGlobals options
 |Property|Description|Type|Default|
 |-|-|-|-|
 | baseURL | It sets base url to be concatenate with url of useDataApi options | `string` | `''` |
