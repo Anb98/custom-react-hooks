@@ -1,19 +1,39 @@
 # Hooks
 
+## setGlobals
+This function allows you to set globals options for useDataApi
+
+### Usage
+```js
+setGlobals({
+    baseURL: 'http://your-base-url',
+    headers: {},
+    withCredentials: true,
+})
+```
+
+### useDataApi initial options
+|Property|Description|Type|Default|
+|-|-|-|-|
+| baseURL | It sets base url to be concatenate with url of useDataApi options | `string` | `''` |
+| headers | Request headers |  `any` | `null` |
+| withCredentials | Enable cookie credentials | `boolean` | `false` |
+
 ## useDataApi
-This hook is used to consume API
+This hook is used to consume API at component mount
 
 ### Usage
 ```js
 import React, {useEffect} from 'react';
 import { useDataApi } from 'custom-react-hooks';
 
-const options = { 
+const options = {
     url: 'http://your-endpoint-url',
-    onSuccess: (data)=> {},    
-    onFail: (err)=>{}          
-    onComplete: (data, err)=>{}
-    headers: {}                
+    request: {},
+    lazy: true,
+    onSuccess: (data) => {},
+    onFail: (err) => {},
+    onComplete: (data, err) => {},
 };
 
 const TestComponent = () => {
@@ -22,19 +42,20 @@ const TestComponent = () => {
         isLoading, 
         isError, 
         data, 
-        error 
+        error
     }, fetchData ] = useDataApi(options);
     
     useEffect(()=>{
         const fetchDataOptions = {
             body:{},
+            headers: {},
             method: 'post',
             params: {},
             url: '',
             withCredentials: true
         }
 
-        fetchData(fetchOptions);
+        fetchData(fetchDataOptions);
     },[])
 
     return (
@@ -50,18 +71,11 @@ export default TestComponent;
 ### useDataApi initial options
 |Property|Description|Type|Default|
 |-|-|-|-|
-| url | Initial URL to request | `string` | `null` |
+| url | Initial URL to request | `string` | `globals.baseURL` |
+| request | Request config object axios | [`Request config axios`](https://github.com/axios/axios#request-config) | `{}` |
+| lazy | Stops fetching data at component mount | `boolean` | `false` |
 | onSuccess | Callback called when request fails | `function(data)` | `()=>` |
 | onFail | Callback called when request fails | `function(err)`| `()=>` |
 | onComplete | Callback called when request completes | `function(data, err)` | `()=>` |
-| headers | Request headers | `object` | `{}` |
 
-
-### fetchData options
-| Property | Description | Type | Default |
-|-|-|-|-|
-| body | Body request | `any` | `null`|
-| method | HTTP method | `string` | `get`|
-| params | Params request | `any` | - |
-| url | URL to request | `string` | Initial URL to request |
-| withCredentials | Enable coockie credential | `boolean` | `false` |
+### fetchData options uses type [Request config from axios](https://github.com/axios/axios#request-config)

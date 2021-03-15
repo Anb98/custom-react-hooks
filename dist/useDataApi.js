@@ -1,269 +1,122 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _react = require("react");
-
-var _axios = _interopRequireDefault(require("axios"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var reducer = function reducer(state, action) {
-  switch (action.type) {
-    case 'FETCH_INIT':
-      return _objectSpread(_objectSpread({}, state), {}, {
-        status: 0,
-        isSuccess: false,
-        isLoading: true,
-        isError: false,
-        error: null,
-        data: null
-      });
-
-    case 'FETCH_SUCCESS':
-      return _objectSpread(_objectSpread({}, state), {}, {
-        status: action.payload.status,
-        isSuccess: true,
-        isLoading: false,
-        isError: false,
-        data: action.payload.data
-      });
-
-    case 'FETCH_FAILURE':
-      return _objectSpread(_objectSpread({}, state), {}, {
-        status: action.payload.status,
-        isSuccess: false,
-        isLoading: false,
-        isError: true,
-        error: action.payload.data
-      });
-
-    default:
-      throw new Error();
-  }
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
-/**
- * Callback called when request succeeds
- * @callback onSuccess
- * @param {any} data - Result from request
- */
-
-/**
- * Callback called when request fails
- * @callback onFail
- * @param {any} error - Error from request
- */
-
-/**
- * Callback called when request completes
- * @callback onComplete
- * @param {any} data - Result from request
- * @param {any} error - Error from request
- */
-
-/**
- * Request state
- * @typedef {Object} state
- * @prop {boolean} isLoading - Loading
- * @prop {boolean} isError - Request has failed
- * @prop {boolean} isSuccess - Request has succeed
- * @prop {boolean} status - State from request
- * @prop {any} data - Result from request
- * @prop {any} error - Error from request
- */
-
-/**
- * Initial settings
- * @typedef {Object} initialSettings
- * @prop {string} [url] - Initial URL to request
- * @prop {object} [headers] - Header request
- * @prop {onSuccess} [onSuccess] - Callback called when request succeeds
- * @prop {onFail} [onFail] - Callback called when request fails
- * @prop {onComplete} [onComplete] - Callback called when request completes
- */
-
-/**
- * useDataApi
- * @param {initialSettings} [initialSettings] - Initial settings
- * @returns {state | fetchData}
- */
-
-
-var useDataApi = function useDataApi() {
-  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      _ref$url = _ref.url,
-      originalUrl = _ref$url === void 0 ? null : _ref$url,
-      _ref$headers = _ref.headers,
-      headers = _ref$headers === void 0 ? {} : _ref$headers,
-      _ref$onSuccess = _ref.onSuccess,
-      onSuccess = _ref$onSuccess === void 0 ? function () {} : _ref$onSuccess,
-      _ref$onFail = _ref.onFail,
-      onFail = _ref$onFail === void 0 ? function () {} : _ref$onFail,
-      _ref$onComplete = _ref.onComplete,
-      onComplete = _ref$onComplete === void 0 ? function () {} : _ref$onComplete;
-
-  var _useReducer = (0, _react.useReducer)(reducer, {
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+import * as React from 'react';
+import { globals } from './setGlobals';
+import axios from 'axios';
+var initialState = {
     isSuccess: false,
     isLoading: false,
     isError: false,
     data: null,
-    error: null
-  }),
-      _useReducer2 = _slicedToArray(_useReducer, 2),
-      state = _useReducer2[0],
-      dispatch = _useReducer2[1];
-
-  var requestApi = /*#__PURE__*/function () {
-    var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(request) {
-      var result, data, status, _error$response;
-
-      return regeneratorRuntime.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              _context.prev = 0;
-              dispatch({
-                type: 'FETCH_INIT'
-              });
-              _context.next = 4;
-              return (0, _axios.default)(request);
-
-            case 4:
-              result = _context.sent;
-              data = result.data, status = result.status;
-              dispatch({
-                type: 'FETCH_SUCCESS',
-                payload: {
-                  data: data,
-                  status: status
-                }
-              });
-              onSuccess(data);
-              onComplete(data, null);
-              _context.next = 16;
-              break;
-
-            case 11:
-              _context.prev = 11;
-              _context.t0 = _context["catch"](0);
-              dispatch({
-                type: 'FETCH_FAILURE',
-                payload: {
-                  data: _context.t0,
-                  status: (_error$response = _context.t0.response) === null || _error$response === void 0 ? void 0 : _error$response.status
-                }
-              });
-              onFail(_context.t0);
-              onComplete(null, _context.t0);
-
-            case 16:
-            case "end":
-              return _context.stop();
-          }
-        }
-      }, _callee, null, [[0, 11]]);
-    }));
-
-    return function requestApi(_x) {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-  /**
-   * Params
-   * @typedef {Object} fetchDataParams
-   * @prop {any} [body] - Body request
-   * @prop {string} [method=get] - HTTP method
-   * @prop {any} [params] - Params request
-   * @prop {string} [url] - URL to request
-   * @prop {boolean} [withCredentials=false]
-   */
-
-  /**
-   * fetchData
-   * @param {fetchDataParams}
-   */
-
-
-  var fetchData = /*#__PURE__*/function () {
-    var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-      var _ref4,
-          _ref4$body,
-          body,
-          _ref4$method,
-          method,
-          params,
-          _ref4$url,
-          url,
-          _ref4$withCredentials,
-          withCredentials,
-          request,
-          _args2 = arguments;
-
-      return regeneratorRuntime.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              _ref4 = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {}, _ref4$body = _ref4.body, body = _ref4$body === void 0 ? null : _ref4$body, _ref4$method = _ref4.method, method = _ref4$method === void 0 ? 'get' : _ref4$method, params = _ref4.params, _ref4$url = _ref4.url, url = _ref4$url === void 0 ? originalUrl : _ref4$url, _ref4$withCredentials = _ref4.withCredentials, withCredentials = _ref4$withCredentials === void 0 ? false : _ref4$withCredentials;
-
-              if (!state.isLoading) {
-                _context2.next = 3;
-                break;
-              }
-
-              return _context2.abrupt("return");
-
-            case 3:
-              // Request in process
-              request = {
-                method: method,
-                url: url,
-                headers: _objectSpread(_objectSpread({}, _axios.default.defaults.headers.common), headers),
-                data: body,
-                params: params,
-                withCredentials: withCredentials
-              };
-              requestApi(request);
-
-            case 5:
-            case "end":
-              return _context2.stop();
-          }
-        }
-      }, _callee2);
-    }));
-
-    return function fetchData() {
-      return _ref3.apply(this, arguments);
-    };
-  }();
-
-  return [state, fetchData];
+    error: null,
+    status: 0,
 };
-
-var _default = useDataApi;
-exports.default = _default;
+var reducer = function (state, action) {
+    switch (action.type) {
+        case 'FETCH_INIT':
+            return __assign(__assign({}, state), { status: 0, isSuccess: false, isLoading: true, isError: false, error: null, data: null });
+        case 'FETCH_SUCCESS':
+            return __assign(__assign({}, state), { status: action.payload.status, isSuccess: true, isLoading: false, isError: false, data: action.payload.data });
+        case 'FETCH_FAILURE':
+            return __assign(__assign({}, state), { status: action.payload.status, isSuccess: false, isLoading: false, isError: true, error: action.payload.data });
+        default:
+            throw new Error();
+    }
+};
+/**
+ * useDataApi
+ * @param initialSettings
+ */
+export default (function (props) {
+    var _a = props || {}, _b = _a.url, initialUrl = _b === void 0 ? '' : _b, defaultRequest = _a.request, _c = _a.onSuccess, onSuccess = _c === void 0 ? function () { } : _c, _d = _a.onComplete, onComplete = _d === void 0 ? function () { } : _d, _e = _a.onFail, onFail = _e === void 0 ? function () { } : _e, _f = _a.lazy, lazy = _f === void 0 ? false : _f;
+    var initialHeaders = (defaultRequest === null || defaultRequest === void 0 ? void 0 : defaultRequest.headers) || globals.headers;
+    var defaultWithCredentials = (defaultRequest === null || defaultRequest === void 0 ? void 0 : defaultRequest.withCredentials) || globals.withCredentials;
+    var _g = React.useReducer(reducer, initialState), state = _g[0], dispatch = _g[1];
+    var fetchData = function (request) {
+        if (request === void 0) { request = {}; }
+        return __awaiter(void 0, void 0, void 0, function () {
+            var url, _a, data, status_1, error_1;
+            var _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        _c.trys.push([0, 2, , 3]);
+                        if (state.isLoading)
+                            return [2 /*return*/];
+                        url = request.url || initialUrl;
+                        request.url = globals.baseURL ? globals.baseURL + "/" + url : url;
+                        request.headers = request.headers || initialHeaders;
+                        request.withCredentials = defaultWithCredentials;
+                        request.method = request.method || 'GET';
+                        dispatch({ type: 'FETCH_INIT' });
+                        return [4 /*yield*/, axios(request)];
+                    case 1:
+                        _a = _c.sent(), data = _a.data, status_1 = _a.status;
+                        dispatch({ type: 'FETCH_SUCCESS', payload: { data: data, status: status_1 } });
+                        onSuccess(data);
+                        onComplete(data, null);
+                        return [3 /*break*/, 3];
+                    case 2:
+                        error_1 = _c.sent();
+                        dispatch({ type: 'FETCH_FAILURE', payload: { data: error_1, status: (_b = error_1.response) === null || _b === void 0 ? void 0 : _b.status } });
+                        onFail(error_1);
+                        onComplete(undefined, error_1);
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    React.useEffect(function () {
+        if (!lazy) {
+            fetchData(defaultRequest);
+        }
+    }, []);
+    return [state, fetchData];
+});
+//# sourceMappingURL=useDataApi.js.map
