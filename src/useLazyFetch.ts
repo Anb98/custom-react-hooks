@@ -95,7 +95,7 @@ export default <T = any >(props?: Partial<UseLazyFetchProps<T>>) => {
             request.url = globals.baseURL ? `${ globals.baseURL }/${url}`: url;
             request.headers = { ...globals.headers, ...defaultRequest.headers,  ...request.headers};
             request.withCredentials = defaultWithCredentials
-            request.method = request.method || 'GET';
+            request.method = request.method || defaultRequest.method || 'GET';
 
             dispatch({type: 'FETCH_INIT'});
             const { data, status } = await axios(request)

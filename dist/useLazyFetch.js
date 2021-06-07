@@ -91,7 +91,7 @@ export default (function (props) {
                         request.url = globals.baseURL ? globals.baseURL + "/" + url : url;
                         request.headers = __assign(__assign(__assign({}, globals.headers), defaultRequest.headers), request.headers);
                         request.withCredentials = defaultWithCredentials;
-                        request.method = request.method || 'GET';
+                        request.method = request.method || defaultRequest.method || 'GET';
                         dispatch({ type: 'FETCH_INIT' });
                         return [4 /*yield*/, axios(request)];
                     case 1:
