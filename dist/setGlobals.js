@@ -1,6 +1,6 @@
 export var globals = {
     baseURL: '',
-    headers: null,
+    headers: {},
     withCredentials: false,
 };
 export default (function (_a) {

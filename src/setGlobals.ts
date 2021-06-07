@@ -1,3 +1,4 @@
+
 interface Globals {
     baseURL: string,
     headers: any,
@@ -6,7 +7,7 @@ interface Globals {
 
 export const globals: Globals = {
     baseURL: '',
-    headers: null,
+    headers: {},
     withCredentials: false,
 };
 

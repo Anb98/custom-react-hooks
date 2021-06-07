@@ -1,44 +1,34 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-import * as React from 'react';
-import useDataApi from './useDataApi';
-import { CacheContext } from './CacheContext';
-export default (function (props) {
-    var _a = props || {}, _b = _a.refresh, initialRefresh = _b === void 0 ? false : _b, _c = _a.onSuccess, onSuccess = _c === void 0 ? function () { } : _c;
-    var _d = React.useContext(CacheContext), stateCache = _d.state, setResult = _d.setResult;
-    var _e = React.useState(''), stringRequest = _e[0], setStringRequest = _e[1];
-    var _f = React.useState(null), resultCache = _f[0], setResultCache = _f[1];
-    var setCache = function (data) {
-        setResult(stringRequest, data);
-        setResultCache(data);
-        onSuccess(data);
-    };
-    var _g = useDataApi(__assign(__assign({}, props), { lazy: true, onSuccess: setCache })), stateApi = _g[0], fetchData = _g[1];
-    var verifyCache = function (request, _a) {
-        var _b = _a === void 0 ? {} : _a, refresh = _b.refresh;
-        var stringRequest = JSON.stringify(request);
-        if (!refresh && stateCache[stringRequest]) {
-            setResultCache(stateCache[stringRequest]);
-        }
-        else {
-            setStringRequest(stringRequest);
-            fetchData(request);
-        }
-    };
-    React.useEffect(function () {
-        if (!(props === null || props === void 0 ? void 0 : props.lazy)) {
-            verifyCache(props === null || props === void 0 ? void 0 : props.request, { refresh: initialRefresh });
-        }
-    }, []);
-    return [__assign(__assign({}, stateApi), { data: resultCache }), verifyCache];
-});
+// import * as React from 'react';
+// import useFetch, { UseFetchProps, Request } from './useFetch';
+// import { CacheContext } from './CacheContext';
+// type Refresh = {refresh?: boolean};
+// type Props<T> = UseFetchProps<T> & Refresh;
+// export default <T = any>(props?: Partial<Props<T>>)=>{
+//     const { refresh: initialRefresh = false, onSuccess = ()=>{} } = props || {};
+//     const { state: stateCache, setResult } = React.useContext(CacheContext);
+//     const [ stringRequest, setStringRequest ] = React.useState('');
+//     const [ resultCache, setResultCache ] = React.useState(null);
+//     const setCache = (data: any) => {
+//         setResult(stringRequest, data);
+//         setResultCache(data);
+//         onSuccess(data);
+//     };
+//     const [stateApi, fetchData] = useFetch({...props, onSuccess: setCache});
+//     const verifyCache = (request?: Request, { refresh }: Refresh = {})=>{
+//         const stringRequest: string = JSON.stringify(request);
+//         if(!refresh && stateCache[stringRequest]){
+//             setResultCache(stateCache[stringRequest]);
+//         }else{
+//             setStringRequest(stringRequest);
+//             fetchData(request);
+//         }
+//     };
+//     // React.useEffect(()=>{
+//     //     if(!props?.lazy){
+//     //         verifyCache( props?.request, { refresh: initialRefresh });
+//     //     }
+//     // },[]);
+//     return [{ ...stateApi, data:resultCache }, verifyCache] as const;
+// }
+export default (function () { });
 //# sourceMappingURL=useDataApiCache.js.map

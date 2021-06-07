@@ -2,11 +2,10 @@ import * as React from 'react';
 import { globals } from './setGlobals';
 import axios, { AxiosRequestConfig } from 'axios';
 
-export type Request = Omit<AxiosRequestConfig, 'baseURL'>;
-export type UseDataApiProps<T> = {
+export type RequestUseLazyFetch = Omit<AxiosRequestConfig, 'baseURL'>;
+export type UseLazyFetchProps<T> = {
     url: string,
-    request: Omit<Request, 'url'>,
-    lazy: boolean,
+    request: Omit<RequestUseLazyFetch, 'url'>,
 	onSuccess: (data?: T) => void,
 	onFail: (err?: any) => void,
 	onComplete: (data?: T, err?: any) => void,
@@ -72,31 +71,29 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 };
 
 /**
- * useDataApi
+ * useLazyFetch
  * @param initialSettings
  */
-export default <T = any >(props?: Partial<UseDataApiProps<T>>) => {
+export default <T = any >(props?: Partial<UseLazyFetchProps<T>>) => {
     const {
         url: initialUrl = '',
-        request: defaultRequest,
+        request: defaultRequest = {},
         onSuccess = ()=>{},
         onComplete = ()=>{},
         onFail = ()=>{},
-        lazy = false,
     } = props || {};
 
-    const initialHeaders = defaultRequest?.headers || globals.headers;
     const defaultWithCredentials = defaultRequest?.withCredentials || globals.withCredentials;
 
     const [state, dispatch] = React.useReducer<Reducer<T>>(reducer, initialState);
 
-    const fetchData = async (request: Request = {}) => {
+    const fetchData = async (request: RequestUseLazyFetch = {}) => {
         try {
             if(state.isLoading) return;
 
             const url = request.url || initialUrl;
             request.url = globals.baseURL ? `${ globals.baseURL }/${url}`: url;
-            request.headers = request.headers || initialHeaders;
+            request.headers = { ...globals.headers, ...defaultRequest.headers,  ...request.headers};
             request.withCredentials = defaultWithCredentials
             request.method = request.method || 'GET';
 
@@ -112,12 +109,6 @@ export default <T = any >(props?: Partial<UseDataApiProps<T>>) => {
             onComplete(undefined, error);
         }
     }
-
-    React.useEffect(()=>{
-        if(!lazy){
-            fetchData(defaultRequest);
-        }
-    }, []);
 
     return [state, fetchData] as const;
 }
