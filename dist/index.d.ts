@@ -5,3 +5,4 @@ export { default as useFetchCache } from './useFetchCache';
 export { default as useLazyFetchCache } from './useLazyFetchCache';
 export { default as CacheProvider } from './CacheContext';
 export { default as useSearch } from './useSearch';
+export { default as usePromise } from './usePromise';
