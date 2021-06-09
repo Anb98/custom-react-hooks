@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 export type UsePromise<T> = {
-    promise: Promise<T>,
 	onSuccess?: (data?: T) => void,
 	onFail?: (err?: any) => void,
 	onComplete?: (data?: T, err?: any) => void,
@@ -66,9 +65,8 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 };
 
 
-export default <T = any >(props: UsePromise<T>) => {
+export default <T = any >(promise: ()=>Promise<T>, props: UsePromise<T>) => {
     const {
-        promise,
         onSuccess = ()=>{},
         onComplete = ()=>{},
         onFail = ()=>{},
@@ -81,7 +79,7 @@ export default <T = any >(props: UsePromise<T>) => {
             if(state.isLoading) return;
             
             dispatch({type: 'FETCH_INIT'});
-            const data = await promise;
+            const data = await promise();
             
             dispatch({ type: 'FETCH_SUCCESS', payload: data });
             onSuccess(data);

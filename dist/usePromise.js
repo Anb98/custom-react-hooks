@@ -66,8 +66,8 @@ var reducer = function (state, action) {
             throw new Error();
     }
 };
-export default (function (props) {
-    var _a = props || {}, promise = _a.promise, _b = _a.onSuccess, onSuccess = _b === void 0 ? function () { } : _b, _c = _a.onComplete, onComplete = _c === void 0 ? function () { } : _c, _d = _a.onFail, onFail = _d === void 0 ? function () { } : _d;
+export default (function (promise, props) {
+    var _a = props || {}, _b = _a.onSuccess, onSuccess = _b === void 0 ? function () { } : _b, _c = _a.onComplete, onComplete = _c === void 0 ? function () { } : _c, _d = _a.onFail, onFail = _d === void 0 ? function () { } : _d;
     var _e = React.useReducer(reducer, initialState), state = _e[0], dispatch = _e[1];
     var handlePromise = function () { return __awaiter(void 0, void 0, void 0, function () {
         var data, error_1;
@@ -78,7 +78,7 @@ export default (function (props) {
                     if (state.isLoading)
                         return [2 /*return*/];
                     dispatch({ type: 'FETCH_INIT' });
-                    return [4 /*yield*/, promise];
+                    return [4 /*yield*/, promise()];
                 case 1:
                     data = _a.sent();
                     dispatch({ type: 'FETCH_SUCCESS', payload: data });
