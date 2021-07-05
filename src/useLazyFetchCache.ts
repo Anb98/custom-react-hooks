@@ -5,18 +5,21 @@ import { CacheContext } from './CacheContext';
 type Refresh = { refresh?: boolean };
 
 export default <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
-	const { onSuccess = () => {} } = props || {};
-	const { state: stateCache, setResult } = React.useContext(CacheContext);
-	const [stringRequest, setStringRequest] = React.useState('');
+	const { onSuccess = () => {}, onComplete = () => {} } = props || {};
+	const { result: stateCache, setResult } = React.useContext(CacheContext);
+	const stringRequest = React.useRef('');
 	const [resultCache, setResultCache] = React.useState(props?.initialData);
 
 	const setCache = (data: T) => {
-		setResult(stringRequest, data);
+		setResult(stringRequest.current, data);
 		setResultCache(data);
 		onSuccess(data);
 	};
 
 	const [stateApi, fetchData] = useLazyFetch({ ...props, onSuccess: setCache });
+	const [state, setState] = React.useState(stateApi);
+
+	React.useEffect(() => { setState(stateApi); }, [stateApi]);
 
 	const verifyCache = (request?: RequestUseLazyFetch, { refresh }: Refresh = {}) => {
 		const stringifyRequest: string = JSON.stringify(request || {
@@ -26,11 +29,14 @@ export default <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 
 		if (!refresh && stateCache[stringifyRequest]) {
 			setResultCache(stateCache[stringifyRequest]);
+			setState((prev) => ({ ...prev, status: 'resolved', isSuccess: true }));
+			onSuccess(stateCache[stringifyRequest]);
+			onComplete(stateCache[stringifyRequest], null);
 		} else {
-			setStringRequest(stringifyRequest);
+			stringRequest.current = stringifyRequest;
 			fetchData(request);
 		}
 	};
 
-	return [{ ...stateApi, data: resultCache }, verifyCache] as const;
+	return [{ ...state, data: resultCache }, verifyCache] as const;
 };

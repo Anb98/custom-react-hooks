@@ -1,13 +1,17 @@
 import * as React from 'react';
 
 export type Properties<T> = Array<keyof T>;
-export type Props<T> = { allowFields?: Properties<T>, denyFields?: Properties<T> };
+export type Props<T> = {
+	allowFields: Properties<T>,
+	denyFields: Properties<T>,
+	sourceData: T[]
+};
 
-const useSearch = <T>(props: Props<T> = {}) => {
+const useSearch = <T>(props: Partial<Props<T>> = {}) => {
 	const { allowFields = [], denyFields = [] } = props;
 	const [searchValue, setSearchValue] = React.useState('');
 	const [filtered, setFiltered] = React.useState<T[]>([]);
-	const [sourceData, setSourceData] = React.useState<T[]>([]);
+	const [sourceData, setSourceData] = React.useState<T[]>(props.sourceData || []);
 
 	const filter = () => {
 		const searchValues = searchValue.toLowerCase().trim().split(' ');

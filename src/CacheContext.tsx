@@ -1,28 +1,25 @@
 import * as React from 'react';
 
 type Context = {
-	state: object
+	result: object
 	setResult: (objectRequest: string, result: any) => void
 };
 
-export const CacheContext = React.createContext<Context>({ state: {}, setResult: () => {} });
+export const CacheContext = React.createContext<Context>({ result: {}, setResult: () => {} });
 
 type Props = {
     children: React.ReactNode
 };
 
 export default ({ children } : Props) => {
-	const [state, setState] = React.useState({});
+	const state = React.useRef({});
 
 	const setResult = (objectRequest: string, result: any) => {
-		setState((prevState) => ({
-			...prevState,
-			[objectRequest]: result,
-		}));
+		state.current[objectRequest] = result;
 	};
 
 	return (
-		<CacheContext.Provider value={{ state, setResult }}>
+		<CacheContext.Provider value={{ result: state.current, setResult }}>
 			{children}
 		</CacheContext.Provider>
 	);

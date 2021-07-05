@@ -1,5 +1,8 @@
 # Hooks
 
+## Table of Contents
+## Installation
+
 ## setGlobals
 This function allows you to set globals options for useDataApi
 
