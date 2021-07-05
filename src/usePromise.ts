@@ -66,7 +66,7 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 
 export default <T = any, U = any>(
 	promise: (params?: U)=>Promise<T>,
-	props: Partial<UsePromise<T>>,
+	props?: Partial<UsePromise<T>>,
 ) => {
 	const {
 		initialData = null,
