@@ -1,4 +1,3 @@
-
 interface Globals {
     baseURL: string,
     headers: any,
@@ -6,13 +5,13 @@ interface Globals {
 }
 
 export const globals: Globals = {
-    baseURL: '',
-    headers: {},
-    withCredentials: false,
+	baseURL: '',
+	headers: {},
+	withCredentials: false,
 };
 
 export default ({
-    baseURL = globals.baseURL,
-    headers = globals.headers,
-    withCredentials = globals.withCredentials
-}: Partial<Globals>) => Object.assign(globals, { baseURL, headers, withCredentials});
+	baseURL = globals.baseURL,
+	headers = globals.headers,
+	withCredentials = globals.withCredentials,
+}: Partial<Globals>) => Object.assign(globals, { baseURL, headers, withCredentials });

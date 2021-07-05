@@ -1,10 +1,11 @@
 import * as React from 'react';
 
 export type UsePromise<T> = {
-	onSuccess?: (data?: T) => void,
-	onFail?: (err?: any) => void,
-	onComplete?: (data?: T, err?: any) => void,
-}
+    initialData: T,
+	onSuccess: (data?: T) => void | Promise<void>,
+	onFail: (err?: any) => void | Promise<void>,
+	onComplete: (data?: T, err?: any) => void | Promise<void>,
+};
 
 export type State<T> = {
     isSuccess: boolean,
@@ -16,15 +17,15 @@ export type State<T> = {
 };
 
 const initialState: Readonly<State<null>> = {
-    isSuccess: false,
-    isLoading: false,
-    isError: false,
-    data: null,
-    error: null,
-    status: 'idle',
-}
+	isSuccess: false,
+	isLoading: false,
+	isError: false,
+	data: null,
+	error: null,
+	status: 'idle',
+};
 
-type Action = { type: 'FETCH_INIT' } 
+type Action = { type: 'FETCH_INIT' }
     | { type: 'FETCH_SUCCESS', payload: any }
     | { type: 'FETCH_FAILURE', payload: any };
 
@@ -39,7 +40,6 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 			isLoading: true,
 			isError: false,
 			error: null,
-			data: null,
 		};
 	case 'FETCH_SUCCESS':
 		return {
@@ -64,32 +64,38 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 	}
 };
 
+export default <T = any, U = any>(
+	promise: (params?: U)=>Promise<T>,
+	props: Partial<UsePromise<T>>,
+) => {
+	const {
+		initialData = null,
+		onSuccess = () => {},
+		onComplete = () => {},
+		onFail = () => {},
+	} = props || {};
 
-export default <T = any >(promise: ()=>Promise<T>, props: UsePromise<T>) => {
-    const {
-        onSuccess = ()=>{},
-        onComplete = ()=>{},
-        onFail = ()=>{},
-    } = props || {};
+	const [state, dispatch] = React.useReducer<Reducer<T>>(reducer, {
+		...initialState,
+		data: initialData,
+	});
 
-    const [state, dispatch] = React.useReducer<Reducer<T>>(reducer, initialState);
+	const handlePromise = async (promiseParams?: U) => {
+		try {
+			if (state.isLoading) return;
 
-    const handlePromise = async () => {
-        try {
-            if(state.isLoading) return;
-            
-            dispatch({type: 'FETCH_INIT'});
-            const data = await promise();
-            
-            dispatch({ type: 'FETCH_SUCCESS', payload: data });
-            onSuccess(data);
-            onComplete(data, null);
-        } catch (error) {
-            dispatch({ type:  'FETCH_FAILURE', payload: error })
-            onFail(error);
-            onComplete(undefined, error);
-        }
-    }
+			dispatch({ type: 'FETCH_INIT' });
+			const data = await promise(promiseParams);
 
-    return [state, handlePromise] as const;
-}
+			dispatch({ type: 'FETCH_SUCCESS', payload: data });
+			onSuccess(data);
+			onComplete(data, null);
+		} catch (error) {
+			dispatch({ type: 'FETCH_FAILURE', payload: error });
+			onFail(error);
+			onComplete(undefined, error);
+		}
+	};
+
+	return [state, handlePromise] as const;
+};
