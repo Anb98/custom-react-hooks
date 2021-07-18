@@ -118,6 +118,7 @@ This hook is a wrapper for [`useLazyFetch`](#useLazyFetch).
 import { useFetch } from '@anb98/react-hooks';
 
 const options = {
+    deps: [],
     initialData: {},
     request: { headers: { example: 'test'} }
     onFail: (err) => {},
@@ -156,6 +157,11 @@ export default TestComponent;
 ```
 > `URL` first param is mandatory
 
+### Initial options
+|Property|Description|Type|Default|
+|-|-|-|-|
+|deps| Dependency list to run hook | `Array<any>` | `[]` |
+
 
 ## usePromise
 This hook executes a `Promise` when calling the handler function.
@@ -167,6 +173,8 @@ import { usePromise } from '@anb98/react-hooks';
 const promise = () => Promise.resolve('example');
 
 const options = {
+    deps:[],
+    params: null,
     initialData: {},
     onFail: (err) => {},
     onSuccess: (data) => {},
@@ -195,10 +203,12 @@ export default TestComponent;
 ```
 > `promise` function param is __mandatory__
 
-> `handlerOptions` are passed to `promise` function
+> `handlerOptions` are passed to `promise` function; otherwise it passes `params` from `initial options`
 ### Initial options
 |Property|Description|Type|Default|
 |-|-|-|-|
+|deps| Dependency list to run hook | `Array<any>` | `[]` |
+|params| Default params to use in promise handler | `any` | `undefined` |
 | initialData | Initial data to return as result | `any` | `null` |
 | onFail | Callback called when request fails | `function(err)`| `()=>{}` |
 | onSuccess | Callback called when request fails | `function(data)` | `()=>{}` |

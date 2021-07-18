@@ -1,7 +1,11 @@
 import * as React from 'react';
 
-export type UsePromise<T> = {
+type DependencyList = ReadonlyArray<any>;
+
+export type UsePromise<T, U> = {
     initialData: T,
+	deps: DependencyList
+	params: U,
 	onSuccess: (data?: T) => void | Promise<void>,
 	onFail: (err?: any) => void | Promise<void>,
 	onComplete: (data?: T, err?: any) => void | Promise<void>,
@@ -64,15 +68,17 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 	}
 };
 
-export default <T = any, U = any>(
+const usePromise = <T = any, U = any>(
 	promise: (params?: U)=>Promise<T>,
-	props?: Partial<UsePromise<T>>,
+	props?: Partial<UsePromise<T, U>>,
 ) => {
 	const {
 		initialData = null,
 		onSuccess = () => {},
 		onComplete = () => {},
 		onFail = () => {},
+		deps,
+		params,
 	} = props || {};
 
 	const [state, dispatch] = React.useReducer<Reducer<T>>(reducer, {
@@ -80,7 +86,7 @@ export default <T = any, U = any>(
 		data: initialData,
 	});
 
-	const handlePromise = async (promiseParams?: U) => {
+	const handlePromise = async (promiseParams = params) => {
 		try {
 			if (state.isLoading) return;
 
@@ -97,5 +103,9 @@ export default <T = any, U = any>(
 		}
 	};
 
+	React.useEffect(() => { if (deps) { handlePromise(params); } }, deps);
+
 	return [state, handlePromise] as const;
 };
+
+export default usePromise;

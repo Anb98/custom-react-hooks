@@ -79,7 +79,7 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
  * useLazyFetch
  * @param initialSettings
  */
-export default <T = any >(props?: Partial<UseLazyFetchProps<T>>) => {
+const useLazyFetch = <T = any >(props?: Partial<UseLazyFetchProps<T>>) => {
 	const {
 		initialData = null,
 		url: initialUrl = '',
@@ -121,3 +121,5 @@ export default <T = any >(props?: Partial<UseLazyFetchProps<T>>) => {
 
 	return [state, fetchData] as const;
 };
+
+export default useLazyFetch;

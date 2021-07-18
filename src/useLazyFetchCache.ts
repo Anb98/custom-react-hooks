@@ -4,7 +4,7 @@ import { CacheContext } from './CacheContext';
 
 type Refresh = { refresh?: boolean };
 
-export default <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
+const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 	const { onSuccess = () => {}, onComplete = () => {} } = props || {};
 	const { result: stateCache, setResult } = React.useContext(CacheContext);
 	const stringRequest = React.useRef('');
@@ -40,3 +40,5 @@ export default <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 
 	return [{ ...state, data: resultCache }, verifyCache] as const;
 };
+
+export default useLazyFetchCache;

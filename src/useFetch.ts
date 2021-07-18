@@ -1,19 +1,24 @@
 import * as React from 'react';
 import useLazyFetch, { UseLazyFetchProps, RequestUseLazyFetch } from './useLazyFetch';
 
-export type UseFetchProps<T> = Omit<UseLazyFetchProps<T>, 'url'>;
+type DependencyList = ReadonlyArray<any>;
+
+export type UseFetchProps<T> = Omit<UseLazyFetchProps<T>, 'url'> & { deps: DependencyList };
 export type RequestUseFetch = RequestUseLazyFetch;
 
 /**
  * useFetch
  * @param initialSettings
  */
-export default <T = any >(url: string, props?: Partial<UseFetchProps<T>>) => {
+const useFetch = <T = any >(url: string, props?: Partial<UseFetchProps<T>>) => {
+	const { deps = [] } = props || {};
 	const [state, handler] = useLazyFetch({ ...props, url });
 
 	React.useEffect(() => {
 		handler(props?.request);
-	}, [url]);
+	}, [url, ...deps]);
 
 	return [state, handler] as const;
 };
+
+export default useFetch;
