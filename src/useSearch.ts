@@ -11,7 +11,7 @@ const useSearch = <T>(props: Partial<Props<T>> = {}) => {
 	const { allowFields = [], denyFields = [] } = props;
 	const [searchValue, setSearchValue] = React.useState('');
 	const [filtered, setFiltered] = React.useState<T[]>([]);
-	const [sourceData, setSourceData] = React.useState<T[]>(props.sourceData || []);
+	const [sourceData, setSourceData] = React.useState<T[]>([]);
 
 	const filter = () => {
 		const searchValues = searchValue.toLowerCase().trim().split(' ');
@@ -42,6 +42,8 @@ const useSearch = <T>(props: Partial<Props<T>> = {}) => {
 
 		setFiltered(filteredData);
 	};
+
+	React.useEffect(() => { setSourceData(props.sourceData || []); }, [props.sourceData]);
 
 	React.useEffect(() => { filter(); }, [searchValue, sourceData]);
 
