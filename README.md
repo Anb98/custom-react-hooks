@@ -38,7 +38,7 @@ setGlobals({
 
 
 ## useLazyFetch
-This hook consumes API when calling the handler function.
+This hook is a wrapper for [`usePromise`](#usePromise) hook which consumes an API when calling the handler function.
 
 ### Usage
 ```js
@@ -61,8 +61,7 @@ const TestComponent = () => {
         isLoading,
         isSuccess,
         status,
-        statusCode,
-    }, handler ] = useLazyFetch(options);
+    }, handler, resetState ] = useLazyFetch(options);
     
     const getData = () => {
         const handlerOptions = {
@@ -102,7 +101,8 @@ export default TestComponent;
 | isLoading | It shows if the request is loading | `boolean` | `false` |
 | isSuccess | It shows if the request completed successfully | `boolean` | `false` |
 | status | It shows the request's status | `idle` \| `pending` \| `resolved` \| `rejected` | `idle` |
-| statusCode | It shows the request status code | `number` | `0` |
+
+> `resetState` function will reset returned state to initial state.
 
 > `handlerOptions` options uses type [Request config from axios](https://github.com/axios/axios#request-config)
 ## useFetch
@@ -134,8 +134,7 @@ const TestComponent = () => {
         isLoading,
         isSuccess,
         status,
-        statusCode,
-    }, handler ] = useFetch('http://your-endpoint-url', options);
+    }, handler, resetState ] = useFetch('http://your-endpoint-url', options);
     
     const getData = () => {
         const handlerOptions = {
@@ -161,7 +160,6 @@ export default TestComponent;
 |Property|Description|Type|Default|
 |-|-|-|-|
 |deps| Dependency list to run hook | `Array<any>` | `[]` |
-
 
 ## usePromise
 This hook executes a `Promise` when calling the handler function.
@@ -189,7 +187,7 @@ const TestComponent = () => {
         isLoading,
         isSuccess,
         status,
-    }, handler ] = useFetch(promise, options);
+    }, handler, resetState ] = useFetch(promise, options);
     
     const getPromiseResult = () => {
         const handlerOptions = {example: 'test'};
@@ -204,6 +202,8 @@ export default TestComponent;
 > `promise` function param is __mandatory__
 
 > `handlerOptions` are passed to `promise` function; otherwise it passes `params` from `initial options`
+
+> `resetState` function will reset returned state to initial state.
 ### Initial options
 |Property|Description|Type|Default|
 |-|-|-|-|
