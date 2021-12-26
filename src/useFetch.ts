@@ -12,13 +12,13 @@ export type RequestUseFetch = RequestUseLazyFetch;
  */
 const useFetch = <T = any >(url: string, props?: Partial<UseFetchProps<T>>) => {
 	const { deps = [] } = props || {};
-	const [state, handler] = useLazyFetch({ ...props, url });
+	const [state, handler, resetState] = useLazyFetch({ ...props, url });
 
 	React.useEffect(() => {
 		handler(props?.request);
 	}, [url, ...deps]);
 
-	return [state, handler] as const;
+	return [state, handler, resetState] as const;
 };
 
 export default useFetch;

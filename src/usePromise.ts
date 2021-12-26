@@ -29,14 +29,17 @@ const initialState: Readonly<State<null>> = {
 	status: 'idle',
 };
 
-type Action = { type: 'FETCH_INIT' }
-    | { type: 'FETCH_SUCCESS', payload: any }
-    | { type: 'FETCH_FAILURE', payload: any };
+type Action = { type: 'PROMISE_INIT' }
+	| { type: 'PROMISE_IDLE' }
+    | { type: 'PROMISE_SUCCESS', payload: any }
+    | { type: 'PROMISE_FAILURE', payload: any };
 
 type Reducer<T> = (state: State<T>, action: Action) => State<T>;
 const reducer = <T>(state: State<T>, action: Action): State<T> => {
 	switch (action.type) {
-	case 'FETCH_INIT':
+	case 'PROMISE_IDLE':
+		return initialState;
+	case 'PROMISE_INIT':
 		return {
 			...state,
 			status: 'pending',
@@ -45,7 +48,7 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 			isError: false,
 			error: null,
 		};
-	case 'FETCH_SUCCESS':
+	case 'PROMISE_SUCCESS':
 		return {
 			...state,
 			status: 'resolved',
@@ -54,7 +57,7 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 			isError: false,
 			data: action.payload,
 		};
-	case 'FETCH_FAILURE':
+	case 'PROMISE_FAILURE':
 		return {
 			...state,
 			status: 'rejected',
@@ -68,6 +71,12 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 	}
 };
 
+/**
+ * usePromise
+ * @param promise Promise function to handle
+ * @param props Initial options
+ * @returns [state, handlePromise, resetState]
+ */
 const usePromise = <T = any, U = any>(
 	promise: (params?: U)=>Promise<T>,
 	props?: Partial<UsePromise<T, U>>,
@@ -86,26 +95,34 @@ const usePromise = <T = any, U = any>(
 		data: initialData,
 	});
 
+	/**
+	 * handlePromise executes a Promise
+	 */
 	const handlePromise = async (promiseParams = params) => {
 		try {
 			if (state.isLoading) return;
 
-			dispatch({ type: 'FETCH_INIT' });
+			dispatch({ type: 'PROMISE_INIT' });
 			const data = await promise(promiseParams);
 
-			dispatch({ type: 'FETCH_SUCCESS', payload: data });
+			dispatch({ type: 'PROMISE_SUCCESS', payload: data });
 			onSuccess(data);
 			onComplete(data, null);
 		} catch (error) {
-			dispatch({ type: 'FETCH_FAILURE', payload: error });
+			dispatch({ type: 'PROMISE_FAILURE', payload: error });
 			onFail(error);
 			onComplete(undefined, error);
 		}
 	};
 
+	/**
+	 * resetState function will reset returned state to initial state.
+	 */
+	const resetState = () => dispatch({ type: 'PROMISE_IDLE' });
+
 	React.useEffect(() => { if (deps) { handlePromise(params); } }, deps);
 
-	return [state, handlePromise] as const;
+	return [state, handlePromise, resetState] as const;
 };
 
 export default usePromise;

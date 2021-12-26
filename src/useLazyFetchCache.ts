@@ -4,6 +4,11 @@ import { CacheContext } from './CacheContext';
 
 type Refresh = { refresh?: boolean };
 
+/**
+ * useLazyFetchCache
+ * @param props Initial options
+ * @returns [state, fetchData, resetState]
+ */
 const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 	const { onSuccess = () => {}, onComplete = () => {} } = props || {};
 	const { result: stateCache, setResult } = React.useContext(CacheContext);
@@ -16,7 +21,7 @@ const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 		onSuccess(data);
 	};
 
-	const [stateApi, fetchData] = useLazyFetch({ ...props, onSuccess: setCache });
+	const [stateApi, fetchData, resetState] = useLazyFetch({ ...props, onSuccess: setCache });
 	const [state, setState] = React.useState(stateApi);
 
 	React.useEffect(() => { setState(stateApi); }, [stateApi]);
@@ -38,7 +43,7 @@ const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 		}
 	};
 
-	return [{ ...state, data: resultCache }, verifyCache] as const;
+	return [{ ...state, data: resultCache }, verifyCache, resetState] as const;
 };
 
 export default useLazyFetchCache;
