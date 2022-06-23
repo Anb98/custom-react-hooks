@@ -187,7 +187,7 @@ const TestComponent = () => {
         isLoading,
         isSuccess,
         status,
-    }, handler, resetState ] = useFetch(promise, options);
+    }, handler, resetState ] = usePromise(promise, options);
     
     const getPromiseResult = () => {
         const handlerOptions = {example: 'test'};
