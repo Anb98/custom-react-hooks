@@ -7,6 +7,16 @@ export type Props<T> = {
 	sourceData: T[]
 };
 
+/**
+ * This hook filters results when searching.
+ * @param props Initial options
+ * @example
+ * ```
+const { setSourceData, setSearchValue, filtered, sourceData }
+= useSearch({ allowFields: [], denyFields: [] sourceData: [] });
+ * ```
+ * @see https://www.npmjs.com/package/@anb98/react-hooks#useSearch
+ */
 const useSearch = <T>(props: Partial<Props<T>> = {}) => {
 	const { allowFields = [], denyFields = [] } = props;
 	const [searchValue, setSearchValue] = React.useState('');
