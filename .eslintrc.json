@@ -4,11 +4,14 @@
         "es2021": true
     },
     "extends": [
+        "eslint:recommended",
         "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended",
         "airbnb-typescript"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
+        "project": "./tsconfig.json",
         "ecmaFeatures": {
             "jsx": true
         },
@@ -17,14 +20,14 @@
     },
     "plugins": [
         "react",
+        "import",
         "@typescript-eslint"
     ],
-    "parserOptions": {
-        "project": "./tsconfig.json"
-    },
     "rules": {
         "linebreak-style": 0,
         "@typescript-eslint/indent": 0,
+        "space-before-blocks": "off",
+        "@typescript-eslint/space-before-blocks": ["error"],
         "react/jsx-indent": ["warn", "tab"],
 		"react/jsx-indent-props": ["warn", "tab"],
         "no-tabs": ["error", { "allowIndentationTabs": true }],
