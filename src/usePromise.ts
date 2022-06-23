@@ -71,11 +71,25 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 	}
 };
 
+type PromiseHandler<T> = (params?: T) => void;
+
 /**
- * usePromise
+ * This hook executes a Promise when calling the promiseHandler function.
  * @param promise Promise function to handle
  * @param props Initial options
- * @returns [state, handlePromise, resetState]
+ * @returns [state, promiseHandler, resetState]
+ * @example
+ * ```
+const [state, promiseHandler, resetState ] = usePromise(promise, {
+    deps:[],
+    params: null,
+    initialData: {},
+    onFail: (err) => {},
+    onSuccess: (data) => {},
+    onComplete: (data, err) => {},
+});
+ *```
+ * @see https://www.npmjs.com/package/@anb98/react-hooks#usePromise
  */
 const usePromise = <T = any, U = any>(
 	promise: (params?: U)=>Promise<T>,
@@ -95,10 +109,9 @@ const usePromise = <T = any, U = any>(
 		data: initialData,
 	});
 
-	/**
-	 * handlePromise executes a Promise
-	 */
-	const handlePromise = async (promiseParams = params) => {
+	const resetState = () => dispatch({ type: 'PROMISE_IDLE' });
+
+	const promiseHandler: PromiseHandler<U> = async (promiseParams = params) => {
 		try {
 			if (state.isLoading) return;
 
@@ -115,14 +128,9 @@ const usePromise = <T = any, U = any>(
 		}
 	};
 
-	/**
-	 * resetState function will reset returned state to initial state.
-	 */
-	const resetState = () => dispatch({ type: 'PROMISE_IDLE' });
+	React.useEffect(() => { if (deps) { promiseHandler(params); } }, deps);
 
-	React.useEffect(() => { if (deps) { handlePromise(params); } }, deps);
-
-	return [state, handlePromise, resetState] as const;
+	return [state, promiseHandler, resetState] as const;
 };
 
 export default usePromise;

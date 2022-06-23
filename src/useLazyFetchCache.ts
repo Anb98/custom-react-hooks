@@ -4,10 +4,25 @@ import { CacheContext } from './CacheContext';
 
 type Refresh = { refresh?: boolean };
 
+type VerifyCache = (request?: RequestUseLazyFetch, options?: Refresh) => void;
+
 /**
- * useLazyFetchCache
+ * This hooks allow to cache results from request previously fetched.
+ * To use this hooks you first need to implement CacheProvider.
+ * @param {string} url URL to request
  * @param props Initial options
- * @returns [state, fetchData, resetState]
+ * @example
+ * ```
+const [state, fetchHandler, resetState ] = useLazyFetchCache({
+    url: 'your-endpoint-url',
+    initialData: {},
+    request: { headers: { example: 'test'} }
+    onFail: (err) => {},
+    onSuccess: (data) => {},
+    onComplete: (data, err) => {},
+});
+ * ```
+ * @see https://www.npmjs.com/package/@anb98/react-hooks#useFetchCache-and-useLazyFetchCache
  */
 const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 	const { onSuccess = () => {}, onComplete = () => {} } = props || {};
@@ -26,7 +41,7 @@ const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 
 	React.useEffect(() => { setState(stateApi); }, [stateApi]);
 
-	const verifyCache = (request?: RequestUseLazyFetch, { refresh }: Refresh = {}) => {
+	const verifyCache: VerifyCache = (request?: RequestUseLazyFetch, { refresh }: Refresh = {}) => {
 		const stringifyRequest: string = JSON.stringify(request || {
 			...props?.request,
 			url: props?.url,

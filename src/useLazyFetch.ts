@@ -6,12 +6,24 @@ export type RequestUseLazyFetch = Omit<AxiosRequestConfig, 'baseURL'>;
 export type UseLazyFetchProps<T> = {
     url: string,
     request: Omit<RequestUseLazyFetch, 'url'>,
-} & Omit<UsePromise<T, { xd:string }>, 'deps' | 'params'>;
+} & Omit<UsePromise<T, RequestUseLazyFetch>, 'deps' | 'params'>;
 
 /**
- * useLazyFetch
+ * This hook consumes an API when calling the handler function.
  * @param props Initial options
- * @returns [state, fetchData, resetState]
+ * @returns [state, handler, resetState]
+ * @example
+ * ```
+const [state, handler, resetState ] = useLazyFetch({
+    url: 'your-endpoint-url',
+    initialData: {},
+    request: { headers: { example: 'test'} }
+    onFail: (err) => {},
+    onSuccess: (data) => {},
+    onComplete: (data, err) => {},
+});
+```
+ * @see https://www.npmjs.com/package/@anb98/react-hooks#useLazyFetch
  */
 const useLazyFetch = <T = any >(props?: Partial<UseLazyFetchProps<T>>) => {
 	const {
