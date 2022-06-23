@@ -17,9 +17,10 @@ const [state, fetchHandler, resetState ] = useLazyFetchCache({
     url: 'your-endpoint-url',
     initialData: {},
     request: { headers: { example: 'test'} }
+    onCancel: () => {},
+    onComplete: (data, err) => {},
     onFail: (err) => {},
     onSuccess: (data) => {},
-    onComplete: (data, err) => {},
 });
  * ```
  * @see https://www.npmjs.com/package/@anb98/react-hooks#useFetchCache-and-useLazyFetchCache
@@ -36,7 +37,7 @@ const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 		onSuccess(data);
 	};
 
-	const [stateApi, fetchData, resetState] = useLazyFetch({ ...props, onSuccess: setCache });
+	const [stateApi, fetchData, resetState, cancelFetch] = useLazyFetch({ ...props, onSuccess: setCache });
 	const [state, setState] = React.useState(stateApi);
 
 	React.useEffect(() => { setState(stateApi); }, [stateApi]);
@@ -58,7 +59,7 @@ const useLazyFetchCache = <T = any>(props?: Partial<UseLazyFetchProps<T>>) => {
 		}
 	};
 
-	return [{ ...state, data: resultCache }, verifyCache, resetState] as const;
+	return [{ ...state, data: resultCache }, verifyCache, resetState, cancelFetch] as const;
 };
 
 export default useLazyFetchCache;

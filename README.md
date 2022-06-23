@@ -48,9 +48,10 @@ const options = {
     url: 'http://your-endpoint-url',
     initialData: {},
     request: { headers: { example: 'test'} }
+    onCancel: () => {},
+    onComplete: (data, err) => {},
     onFail: (err) => {},
     onSuccess: (data) => {},
-    onComplete: (data, err) => {},
 };
 
 const TestComponent = () => {
@@ -61,10 +62,10 @@ const TestComponent = () => {
         isLoading,
         isSuccess,
         status,
-    }, handler, resetState ] = useLazyFetch(options);
+    }, fetchData, resetState, cancelFetch ] = useLazyFetch(options);
     
     const getData = () => {
-        const handlerOptions = {
+        const fetchDataOptions = {
             body:{},
             headers: {},
             method: 'post',
@@ -73,7 +74,7 @@ const TestComponent = () => {
             withCredentials: true
         }
 
-        handler(handlerOptions);
+        fetchData(fetchDataOptions);
     };
 
     return (<button onClick={getData}>test</button>);
@@ -91,6 +92,7 @@ export default TestComponent;
 | onFail | Callback called when request fails | `function(err)`| `()=>{}` |
 | onSuccess | Callback called when request fails | `function(data)` | `()=>{}` |
 | onComplete | Callback called when request completes | `function(data, err)` | `()=>{}` |
+| onCancel | Callback called when request cancels | `function()` | `()=>{}` |
 
 ### Returned state
 |Property|Description|Type|Default|
@@ -104,7 +106,7 @@ export default TestComponent;
 
 > `resetState` function will reset returned state to initial state.
 
-> `handlerOptions` options uses type [Request config from axios](https://github.com/axios/axios#request-config)
+> `fetchDataOptions` options uses type [Request config from axios](https://github.com/axios/axios#request-config)
 ## useFetch
 This hook consumes API when component is mounted and also when calling the handler function.
 
@@ -121,9 +123,10 @@ const options = {
     deps: [],
     initialData: {},
     request: { headers: { example: 'test'} }
+    onCancel: () => {},
+    onComplete: (data, err) => {},
     onFail: (err) => {},
     onSuccess: (data) => {},
-    onComplete: (data, err) => {},
 };
 
 const TestComponent = () => {
@@ -134,10 +137,10 @@ const TestComponent = () => {
         isLoading,
         isSuccess,
         status,
-    }, handler, resetState ] = useFetch('http://your-endpoint-url', options);
+    }, fetchData, resetState, cancelFetch ] = useFetch('http://your-endpoint-url', options);
     
     const getData = () => {
-        const handlerOptions = {
+        const fetchDataOptions = {
             body:{},
             headers: {},
             method: 'post',
@@ -146,7 +149,7 @@ const TestComponent = () => {
             withCredentials: true
         }
 
-        handler(handlerOptions);
+        fetchData(fetchDataOptions);
     };
 
     return (<button onClick={getData}>test</button>);
@@ -168,15 +171,16 @@ This hook executes a `Promise` when calling the handler function.
 ```js
 import { usePromise } from '@anb98/react-hooks';
 
-const promise = () => Promise.resolve('example');
+const promise = (example, test) => Promise.resolve({ example, test });
 
 const options = {
     deps:[],
-    params: null,
+    params: ['example', 'test'],
     initialData: {},
+    onComplete: (data, err) => {},
     onFail: (err) => {},
     onSuccess: (data) => {},
-    onComplete: (data, err) => {},
+    onUnmount: ()=>{},
 };
 
 const TestComponent = () => {
@@ -187,11 +191,10 @@ const TestComponent = () => {
         isLoading,
         isSuccess,
         status,
-    }, handler, resetState ] = usePromise(promise, options);
+    }, promiseHandler, resetState ] = usePromise(promise, options);
     
     const getPromiseResult = () => {
-        const handlerOptions = {example: 'test'};
-        handler(handlerOptions);
+        promiseHandler('example', 'test');
     };
 
     return (<button onClick={getPromiseResult}>test</button>);
@@ -208,11 +211,12 @@ export default TestComponent;
 |Property|Description|Type|Default|
 |-|-|-|-|
 |deps| Dependency list to run hook | `Array<any>` | `[]` |
-|params| Default params to use in promise handler | `any` | `undefined` |
+|params| Default params to use in promise handler | `any[]` | `[]` |
 | initialData | Initial data to return as result | `any` | `null` |
-| onFail | Callback called when request fails | `function(err)`| `()=>{}` |
-| onSuccess | Callback called when request fails | `function(data)` | `()=>{}` |
-| onComplete | Callback called when request completes | `function(data, err)` | `()=>{}` |
+| onFail | Callback called when promise fails | `function(err)`| `()=>{}` |
+| onSuccess | Callback called when promise success | `function(data)` | `()=>{}` |
+| onComplete | Callback called when promise completes | `function(data, err)` | `()=>{}` |
+| onUnmount | Callback called when hook is unmounted | `function()` | `()=>{}` |
 
 ### Returned state
 |Property|Description|Type|Default|
@@ -247,9 +251,7 @@ const App = () => (
 
 Example:
 ```js
-<button 
-    onClick={()=>handler({}, { refresh: true })}
->
+<button onClick={()=>handler({}, { refresh: true })}>
     Fetch Cache
 </button>
 ```

@@ -17,22 +17,23 @@ const [state, fetchHandler, resetState ] = useFetch('your-endpoint-url', {
     deps: [],
     initialData: {},
     request: { headers: { example: 'test'} }
+    onCancel: () => {},
+    onComplete: (data, err) => {},
     onFail: (err) => {},
     onSuccess: (data) => {},
-    onComplete: (data, err) => {},
 });
  * ```
  * @see https://www.npmjs.com/package/@anb98/react-hooks#useFetch
  */
 const useFetch = <T = any >(url: string, props?: Partial<UseFetchProps<T>>) => {
 	const { deps = [] } = props || {};
-	const [state, fetchHandler, resetState] = useLazyFetch({ ...props, url });
+	const [state, fetchHandler, resetState, cancelFetch] = useLazyFetch({ ...props, url });
 
 	React.useEffect(() => {
 		fetchHandler(props?.request);
 	}, [url, ...deps]);
 
-	return [state, fetchHandler, resetState] as const;
+	return [state, fetchHandler, resetState, cancelFetch] as const;
 };
 
 export default useFetch;
