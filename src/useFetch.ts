@@ -1,4 +1,4 @@
-import * as React from 'react';
+// import * as React from 'react';
 import useLazyFetch, { UseLazyFetchProps, RequestUseLazyFetch } from './useLazyFetch';
 
 type DependencyList = ReadonlyArray<any>;
@@ -27,13 +27,8 @@ const [state, fetchHandler, resetState ] = useFetch('your-endpoint-url', {
  */
 const useFetch = <T = any >(url: string, props?: Partial<UseFetchProps<T>>) => {
 	const { deps = [] } = props || {};
-	const [state, fetchHandler, resetState, cancelFetch] = useLazyFetch({ ...props, url });
 
-	React.useEffect(() => {
-		fetchHandler(props?.request);
-	}, [url, ...deps]);
-
-	return [state, fetchHandler, resetState, cancelFetch] as const;
+	return useLazyFetch({ ...props, url, deps: [...deps, url] });
 };
 
 export default useFetch;

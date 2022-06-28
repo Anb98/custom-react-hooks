@@ -9,7 +9,7 @@ export type UseLazyFetchProps<Response> = {
     url: string,
     request: Omit<RequestUseLazyFetch, 'url'>,
 } 
-& Omit<UsePromiseOptions<RequestUseLazyFetch, Response>, 'deps' | 'params' | 'onUnmount'>
+& Omit<UsePromiseOptions<RequestUseLazyFetch, Response>, 'params' | 'onUnmount'>
 & { onCancel: ()=> void };
 
 /**
@@ -31,15 +31,18 @@ const [state, handler, resetState, cancelFetch ] = useLazyFetch({
  * @see https://www.npmjs.com/package/@anb98/react-hooks#useLazyFetch
  */
 const useLazyFetch = <Response = any >(props?: Partial<UseLazyFetchProps<Response>>) => {
-	const controller = React.useRef(new AbortController());
+	const controller = React.useRef<AbortController>();
 
 	const {
 		url: initialUrl = '',
 		request: defaultRequest = {},
 		onCancel = () => {},
+		onComplete = () => {},
 	} = props || {};
 
 	const promise = (request: RequestUseLazyFetch = {}): Promise<Response> => {
+		controller.current = new AbortController();
+
 		const defaultWithCredentials = defaultRequest?.withCredentials || globals.withCredentials;
 		const url = request.url || initialUrl;
 		request.url = globals.baseURL ? `${globals.baseURL}/${url}` : url;
@@ -52,14 +55,20 @@ const useLazyFetch = <Response = any >(props?: Partial<UseLazyFetchProps<Respons
 	};
 
 	const cancelFetch = ()=>{
-		controller.current.abort();
-		onCancel();
+		if (controller.current) {
+			controller.current.abort();
+			onCancel();
+		}
 	};
 
 	const [state, fetchData, resetState] = usePromise(promise, { 
 		...props,
 		initialData: props?.initialData as Awaited<Response>,
 		onUnmount: cancelFetch,
+		onComplete(data, err) {
+			controller.current = undefined;
+			onComplete(data, err);
+		},
 	});
 
 	return [state, fetchData, resetState, cancelFetch ] as const;

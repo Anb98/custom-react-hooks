@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { UseFetchProps } from './useFetch';
 import useLazyFetchCache from './useLazyFetchCache';
 
@@ -23,13 +22,8 @@ const [state, fetchHandler, resetState ] = useFetchCache('your-endpoint-url', {
  */
 const useFetchCache = <T = any>(url: string, props?: Partial<UseFetchProps<T>>) => {
 	const { deps = [] } = props || {};
-	const [state, fetchHandler, resetState, cancelFetch] = useLazyFetchCache({ ...props, url });
 
-	React.useEffect(() => {
-		fetchHandler({ ...props?.request, url });
-	}, [url, ...deps]);
-
-	return [state, fetchHandler, resetState, cancelFetch] as const;
+	return useLazyFetchCache({ ...props, url,  deps: [...deps, url]  });
 };
 
 export default useFetchCache;
