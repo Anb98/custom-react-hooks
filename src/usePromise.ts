@@ -42,30 +42,30 @@ const reducer = <T>(state: State<T>, action: Action): State<T> => {
 		return initialState;
 	case 'PROMISE_INIT':
 		return {
-			...state,
-			status: 'pending',
-			isSuccess: false,
-			isLoading: true,
-			isError: false,
+			data: null,
 			error: null,
+			isError: false,
+			isLoading: true,
+			isSuccess: false,
+			status: 'pending',
 		};
 	case 'PROMISE_SUCCESS':
 		return {
-			...state,
-			status: 'resolved',
-			isSuccess: true,
-			isLoading: false,
-			isError: false,
 			data: action.payload,
+			error: null,
+			isError: false,
+			isLoading: false,
+			isSuccess: true,
+			status: 'resolved',
 		};
 	case 'PROMISE_FAILURE':
 		return {
-			...state,
-			status: 'rejected',
-			isSuccess: false,
-			isLoading: false,
-			isError: true,
+			data: null,
 			error: action.payload,
+			isError: true,
+			isLoading: false,
+			isSuccess: false,
+			status: 'rejected',
 		};
 	default:
 		throw new Error();
@@ -135,7 +135,7 @@ const usePromise = <PromiseFunction extends (...params: [] | any[]) => Promise<a
 		if (deps) { promiseHandler(); } 
 
 		return onUnmount;
-	}, deps);
+	}, deps || []);
 
 	return [state, promiseHandler, resetState] as const;
 };
