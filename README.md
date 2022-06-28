@@ -47,7 +47,7 @@ import { useLazyFetch } from '@anb98/react-hooks';
 const options = {
     url: 'http://your-endpoint-url',
     initialData: {},
-    request: { headers: { example: 'test'} }
+    request: { headers: { example: 'test'} },
     onCancel: () => {},
     onComplete: (data, err) => {},
     onFail: (err) => {},
@@ -122,7 +122,7 @@ import { useFetch } from '@anb98/react-hooks';
 const options = {
     deps: [],
     initialData: {},
-    request: { headers: { example: 'test'} }
+    request: { headers: { example: 'test'} },
     onCancel: () => {},
     onComplete: (data, err) => {},
     onFail: (err) => {},
